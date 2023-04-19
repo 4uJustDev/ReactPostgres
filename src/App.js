@@ -1,64 +1,60 @@
 import React, {useState, useEffect} from 'react';
-import MyApp from './components/main';
-function App() {
-  const [merchants, setMerchants] = useState(false);
-
+import Cards from './components/Cards';
+const App = ()=> {
+  const [merchants, setMerchants] = useState([]);
   useEffect(() => {
     getMerchant();
   }, []);
-
-  function getMerchant() {
-    fetch('http://localhost:3001')
-      .then(response => {
-        return response.text();
-      })
-      .then(data => {
-        setMerchants(data);
-      });
-  }
-
-  function createMerchant() {
+    
+  async function getMerchant() {
+    let response = await fetch('http://localhost:3001');
+    if (response.ok) {
+      let data = await response.json();
+      setMerchants(data);
+    } else {
+      alert("Ошибка HTTP: " + response.status);
+    }
+  };
+  
+  async function createMerchant() {
     let name = prompt('Enter merchant name');
     let email = prompt('Enter merchant email');
-    fetch('http://localhost:3001/merchants', {
+    let response = await fetch('http://localhost:3001/merchants', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({name, email}),
-    })
-      .then(response => {
-        return response.text();
-      })
-      .then(data => {
-        alert(data);
-        getMerchant();
-      });
-  }
-
-  function deleteMerchant() {
+    });
+    if (response.ok) {
+      let returning = await response.text();
+      alert(returning);
+      getMerchant();
+    } else {
+      alert("Ошибка добавления: " + response.status);
+    }
+  };
+  
+  async function deleteMerchant() {
     let id = prompt('Enter merchant id');
-
-    fetch(`http://localhost:3001/merchants/${id}`, {
+    let response = await fetch(`http://localhost:3001/merchants/${id}`, {
       method: 'DELETE',
-    })
-      .then(response => {
-        return response.text();
-      })
-      .then(data => {
-        alert(data);
-        getMerchant();
-      });
-  }
-
+    });
+    if (response.ok) {
+      let returning = await response.text();
+      alert(returning);
+      getMerchant();
+    } else {
+      alert("Ошибка Удаления: " + response.status);
+    }
+  };
+  
   return (
     <div>
-      {merchants ? merchants : 'There is no merchant data available'}
-      <br />
+      {<Cards post={merchants}/>}
       <button onClick={createMerchant}>Add</button>
       <br />
       <button onClick={deleteMerchant}>Delete</button>
-      <MyApp/>
     </div>
   );
 }

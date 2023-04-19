@@ -1,6 +1,7 @@
-import express from 'express'
+const express = require('express')
 const app = express()
 const port = 3001
+
 const merchant_model = require('./merchant_model')
 app.use(express.json())
 app.use(function (req, res, next) {

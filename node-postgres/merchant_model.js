@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+const Pool = require('pg').Pool
 
 const pool = new Pool({
   host: 'localhost',
@@ -10,11 +10,11 @@ const pool = new Pool({
 
 const getMerchants = () => {
   return new Promise(function(resolve, reject) {
-    pool.query('SELECT * FROM merchants ORDER BY id ASC', (error, results) => {
-      if (error) {
-        reject(error)
+    pool.query('SELECT * FROM merchants ORDER BY id ASC', (err, result) => {
+      if (err) {
+        reject(err)
       }
-      resolve(results.rows);
+      resolve(result.rows);
     })
   }) 
 }
@@ -27,7 +27,7 @@ const createMerchant = (body) => {
       if (error) {
         reject(error)
       }
-      resolve(`A new merchant has been added added: ${JSON.stringify(results.rows[0])}`)
+      resolve(`A new merchant has been added: ${JSON.stringify(results.rows[0])}`)
     })
   })
 }
